@@ -1,0 +1,3 @@
+from mancala import *
+
+game()
