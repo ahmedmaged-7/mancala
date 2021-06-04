@@ -94,7 +94,6 @@ class board:
             return " draw score is {} :{}".format(my_score,opponent_score)
         
     def board_flip(self):
-          self.opponent_side.reverse()
           self.opponent_side,self.opponent_score,self.my_side,self.my_score=self.my_side,self.my_score,self.opponent_side,self.opponent_score
           return self
                
