@@ -1,18 +1,21 @@
+import random
 board = [4, 4, 4, 4, 4, 4,
          4, 4, 4, 4, 4, 4]
-#player 1 AI
-#player 0 human
+
 class Node:
     def __init__(self, data,player,score,depth,alpha=None,beta=None):
         self.children = []
         self.alpha=None
         self.beta=None
-        self.score=score
+        self.score=score # list of 2 contains score of each player
         self.data = data
+        self.evaluateValue=None
         self.player=player
         self.depth=depth
-    def insert(self): 
-        if self.depth==5:return
+    def insert(self):  # Compare the new value with the parent node
+        if self.depth==2:
+            self.evaluateValue=self.Utility(self.data)
+            return
         print("data--->",self.data,self.score,self.player)
         for l in self.NextMovePred(self.data,self.player,self.score):
             self.children.append(Node(l["data"],l["player"],l["Score"],self.depth+1))
@@ -20,6 +23,8 @@ class Node:
             print(" child--->",l.data,l.score,l.player)
         for l in self.children:
             l.insert()
+    def Utility(self,data):
+        return random.randint(0,50)
     def NextMovePred(self,data,player,score):
         MoveList=[]
         ScoreInc=[0,0]
@@ -51,6 +56,21 @@ class Node:
         if not node.children:
             return True
         return False
-   
+    def synset_count(self):
+        if not self.children :return 1
+        for z in self.children:
+            if z.children:
+                return 0
+        return 1
+    def synset_no(self):
+        if not self.children:return 0
+        count =0
+        for a in self.children:
+            count+= a.synset_no()
+        if not count : return 1
+        #for b in self.children:
+        #    b.synset_no()
+        return count
+
 c=Node(board,0,[0,0],0)
 c.insert()
