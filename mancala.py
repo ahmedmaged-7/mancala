@@ -36,7 +36,8 @@ class game:
          if(turn_board):
              pass
              print("AI flipped")
-             self.board.board_flip() 
+             self.board.board_flip()
+         self.board.print_board() 
          slot=input()
          play_another_time=self.board.board_turn(slot)[4]
          if(play_another_time):
@@ -94,6 +95,8 @@ class board:
             return " draw score is {} :{}".format(my_score,opponent_score)
         
     def board_flip(self):
+          self.opponent_side.reverse()
+          self.my_side.reverse()
           self.opponent_side,self.opponent_score,self.my_side,self.my_score=self.my_side,self.my_score,self.opponent_side,self.opponent_score
           return self
                
@@ -134,7 +137,7 @@ class take_turn_with_stealing:
             circular_array[(slot+i)%len(circular_array)]+=1
         last_item_Position_in_board=(slot+gems_value-1)%len(circular_array)
         if(self.will_i_steal(circular_array,gems_value,slot)):
-                other_side_pos=last_item_Position_in_board+(7-slot)
+                other_side_pos=12-(last_item_Position_in_board)
                 gems_other_side=circular_array[other_side_pos]
                 circular_array[other_side_pos]=0
                 circular_array[6]+=(gems_other_side+1)
@@ -142,6 +145,11 @@ class take_turn_with_stealing:
             circular_array[last_item_Position_in_board]+=1
             
         return [circular_array[0:6],circular_array[6],circular_array[12:6:-1],opponent_score,Next_turn]
+   
+
+
+
+
     def will_i_steal(self,circular_array,gems_value,slot):
         """
 i will steal when last slot is empty on myside and has gens on other side of board
@@ -149,15 +157,21 @@ i will steal when last slot is empty on myside and has gens on other side of boa
         last_item_Position_in_board=(slot+gems_value-1)%len(circular_array)
         last_slot_empty=(circular_array[last_item_Position_in_board]==0)
         if(last_slot_empty):
+           print("last_slot_empty")  
            last_slot_is_on_my_side=last_item_Position_in_board<6
            if(last_slot_is_on_my_side):
-              other_side_pos=last_item_Position_in_board+(7-slot)
+              print(last_item_Position_in_board)  
+              print(circular_array)   
+              other_side_pos=12-(last_item_Position_in_board) #13 is size of circular array- the score
+              print(other_side_pos)
+              
               other_side_has_gems_is_not_empty=(circular_array[other_side_pos]!=0)
               if(other_side_has_gems_is_not_empty):
+                  print("stole")
                   return True
         return False
         
-        
+if __name__ == '__main__':
+	
+	game() 
 
-
-    
