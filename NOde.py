@@ -1,6 +1,7 @@
 board = [4, 4, 4, 4, 4, 4,
          4, 4, 4, 4, 4, 4]
-
+#player 1 AI
+#player 0 human
 class Node:
     def __init__(self, data,player,score,depth,alpha=None,beta=None):
         self.children = []
@@ -10,7 +11,7 @@ class Node:
         self.data = data
         self.player=player
         self.depth=depth
-    def insert(self):  # Compare the new value with the parent node
+    def insert(self): 
         if self.depth==5:return
         print("data--->",self.data,self.score,self.player)
         for l in self.NextMovePred(self.data,self.player,self.score):
