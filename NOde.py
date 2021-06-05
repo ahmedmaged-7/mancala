@@ -3,7 +3,8 @@ import random
 board = [4, 4, 4, 4, 4, 4,
          4, 4, 4, 4, 4, 4]
 
-
+#player 0 human
+#player 1 AI 
 class Node:
     def __init__(self, data, player, score, depth):
         self.children = []
@@ -36,7 +37,7 @@ class Node:
                 break
                 #return self.evaluateValue,self.alpha,self.beta
         return self.evaluateValue,self.alpha,self.beta
-    def insert(self):  # Compare the new value with the parent node
+    def insert(self):  
         if self.depth == 2:
             self.evaluateValue = self.Utility(self.data)
             return
@@ -50,10 +51,10 @@ class Node:
     def getNextMove(self):
         NextMove=self.children[0]
         for l in self.children[1:]:
-            if  self.player :   #AI
+            if  self.player :   #AI get max  score
                 if NextMove.beta < l.beta:
                     NextMove=l
-            else   :   #AI
+            else   :   #human get min score
                 if NextMove.alpha > l.alpha:
                     NextMove=l
         return NextMove
@@ -65,9 +66,9 @@ class Node:
         for l in self.children:
             l.printTree()
     def Utility(self, data):
-        return random.randint(0, 50)
+        return random.randint(0, 500)
 
-    def NextMovePred(self, data, player, score):
+    def NextMovePred(self, data, player, score): #get list of all possible moves
         MoveList = []
         ScoreInc = [0, 0]
         for i, l in zip(range(player * 6, player * 6 + 6), data[player * 6: player * 6 + 6]):
@@ -94,29 +95,12 @@ class Node:
             node["player"] = PT
             node["Score"] = ScoreInc
             MoveList.append(node)
-        return MoveList
+        return MoveList 
 
     def _IsLeaf(self, node):
         if not node.children:
             return True
         return False
-
-    def synset_count(self):
-        if not self.children: return 1
-        for z in self.children:
-            if z.children:
-                return 0
-        return 1
-
-    def synset_no(self):
-        if not self.children: return 0
-        count = 0
-        for a in self.children:
-            count += a.synset_no()
-        if not count: return 1
-        # for b in self.children:
-        #    b.synset_no()
-        return count
 
 
 c = Node(board, 1, [0, 0], 0)
