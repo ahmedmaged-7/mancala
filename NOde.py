@@ -51,21 +51,6 @@ class Node:
         if not node.children:
             return True
         return False
-    def synset_count(self):
-        if not self.children :return 1
-        for z in self.children:
-            if z.children:
-                return 0
-        return 1
-    def synset_no(self):
-        if not self.children:return 0
-        count =0
-        for a in self.children:
-            count+= a.synset_no()
-        if not count : return 1
-        #for b in self.children:
-        #    b.synset_no()
-        return count
-
+   
 c=Node(board,0,[0,0],0)
 c.insert()
