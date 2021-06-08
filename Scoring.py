@@ -13,8 +13,8 @@ def scoring(ai_score, slots, board):
     if ai_earns:
         no_of_pieces = no_of_pieces - Calc_number_of_pieces(board, PC)
     else:
-        no_of_pieces = Calc_number_of_pieces(User)
+        no_of_pieces = Calc_number_of_pieces(board, User)
     if ai_score:
-        Score = (Score - Calc_number_of_pieces(PC))
+        Score = (Score - ai_score)
     result = Score + no_of_pieces
     return result
