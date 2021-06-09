@@ -100,20 +100,13 @@ class board:
             return " draw score is {} :{}".format(self.my_score, self.opponent_score)
 
     def board_flip(self):
-        print("========before reverse========")
-        print(self.my_side)
-        print(self.opponent_side)
         self.opponent_side.reverse()
         self.my_side.reverse()
+
         tempSide = list(self.opponent_side)
         tempScore = self.opponent_score
-        print("========after reverse========")
-        print(self.my_side)
-        print(self.opponent_side)
+
         self.opponent_side, self.opponent_score, self.my_side, self.my_score = (list(self.my_side), self.my_score, list(tempSide), tempScore)
-        print("======== after flip=========")
-        print(self.my_side)
-        print(self.opponent_side)
         return self
 
     def board_turn(self, slot):
@@ -156,7 +149,6 @@ class take_turn_with_stealing:
     def take_turn(self, my_side, opponent_side, my_score, opponent_score, slot):
         opponent=list(opponent_side)
         opponent.reverse()
-        print(opponent_side)
         circular_array = my_side + [my_score] + opponent
         gems_value = circular_array[slot - 1]
         Next_turn = ((gems_value + slot) % len(circular_array) == 7)
