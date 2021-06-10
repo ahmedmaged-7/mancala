@@ -3,8 +3,9 @@ import random
 board = [4, 4, 4, 4, 4, 4,
          4, 4, 4, 4, 4, 4]
 
-#player 0 human
-#player 1 AI 
+
+# player 0 human
+# player 1 AI
 class Node:
     def __init__(self, data, player, score, depth):
         self.children = []
@@ -15,29 +16,31 @@ class Node:
         self.evaluateValue = None
         self.player = player
         self.depth = depth
-        self.cutoff=False
-    def AlphaBeta(self,alpha,beta):
-        if self.evaluateValue != None :
-            return self.evaluateValue,self.alpha,self.beta
-        self.alpha=alpha
-        self.beta=beta
+        self.cutoff = False
+
+    def AlphaBeta(self, alpha, beta):
+        if self.evaluateValue != None:
+            return self.evaluateValue, self.alpha, self.beta
+        self.alpha = alpha
+        self.beta = beta
         for l in self.children:
-            value,alphaT,betaT = l.AlphaBeta(self.alpha,self.beta)
+            value, alphaT, betaT = l.AlphaBeta(self.alpha, self.beta)
             if self.player == 1:
-                if value==None:value=float('-inf')
-                if betaT==float('inf'):betaT=float('-inf')
-                self.alpha = max(value, self.alpha,betaT)
+                if value == None: value = float('-inf')
+                if betaT == float('inf'): betaT = float('-inf')
+                self.alpha = max(value, self.alpha, betaT)
             else:
-                if value==None:value=float('inf')
-                if alphaT==float('-inf'):alphaT=float('inf')
-                self.beta = min(value, self.beta,alphaT)
-            if self.alpha >= self.beta :
+                if value == None: value = float('inf')
+                if alphaT == float('-inf'): alphaT = float('inf')
+                self.beta = min(value, self.beta, alphaT)
+            if self.alpha >= self.beta:
                 self.cutoff = True
                 print("cutoff")
                 break
-                #return self.evaluateValue,self.alpha,self.beta
-        return self.evaluateValue,self.alpha,self.beta
-    def insert(self):  
+                # return self.evaluateValue,self.alpha,self.beta
+        return self.evaluateValue, self.alpha, self.beta
+
+    def insert(self):
         if self.depth == 2:
             self.evaluateValue = self.Utility(self.data)
             return
@@ -48,27 +51,30 @@ class Node:
             print(" child--->", l.data, l.score, l.player)
         for l in self.children:
             l.insert()
+
     def getNextMove(self):
-        NextMove=self.children[0]
+        NextMove = self.children[0]
         for l in self.children[1:]:
-            if  self.player :   #AI get max  score
+            if self.player:  # AI get max  score
                 if NextMove.beta < l.beta:
-                    NextMove=l
-            else   :   #human get min score
+                    NextMove = l
+            else:  # human get min score
                 if NextMove.alpha > l.alpha:
-                    NextMove=l
+                    NextMove = l
         return NextMove
+
     def printTree(self):
-        if self._IsLeaf(self):return
-        print("data--->", self.data, self.score, self.player,self.alpha,self.beta,self.evaluateValue,self.cutoff)
+        if self._IsLeaf(self): return
+        print("data--->", self.data, self.score, self.player, self.alpha, self.beta, self.evaluateValue, self.cutoff)
         for l in self.children:
-            print(" child--->", l.data, l.score, l.player,l.alpha,l.beta,l.evaluateValue,l.cutoff)
+            print(" child--->", l.data, l.score, l.player, l.alpha, l.beta, l.evaluateValue, l.cutoff)
         for l in self.children:
             l.printTree()
+
     def Utility(self, data):
         return random.randint(0, 500)
 
-    def NextMovePred(self, data, player, score): #get list of all possible moves
+    def NextMovePred(self, data, player, score):  # get list of all possible moves
         MoveList = []
         ScoreInc = [0, 0]
         for i, l in zip(range(player * 6, player * 6 + 6), data[player * 6: player * 6 + 6]):
@@ -95,7 +101,7 @@ class Node:
             node["player"] = PT
             node["Score"] = ScoreInc
             MoveList.append(node)
-        return MoveList 
+        return MoveList
 
     def _IsLeaf(self, node):
         if not node.children:
@@ -105,8 +111,8 @@ class Node:
 
 c = Node(board, 1, [0, 0], 0)
 c.insert()
-c.AlphaBeta(float('-inf'),float('inf'))
+c.AlphaBeta(float('-inf'), float('inf'))
 print("----------------\n")
 c.printTree()
-k=c.getNextMove()
-print(k.data,k.score)
+k = c.getNextMove()
+print(k.data, k.score)
