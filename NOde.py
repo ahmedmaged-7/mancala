@@ -9,7 +9,6 @@ def ono ():
         char = sys.stdin.read(1)
         print ("You pressed: "+char)
         char = sys.stdin.read(1)
-
 t1 = threading.Thread(target=ono)
 t1.start()
 """
@@ -21,6 +20,7 @@ class Node:
     def __init__(self, data, player, score, depth=0):
         self.children = []
         self.NextMove=None
+        self.nextMoveIndex=None
         self.alpha = float('-inf')
         self.beta = float('inf')
         self.score = score  # list of 2 contains score of each player
@@ -33,20 +33,25 @@ class Node:
         if   self._IsLeaf(self):
             return self.evaluateValue,self.alpha,self.beta
         self.NextMove=self.children[0]
+        self.nextMoveIndex=0
         self.alpha=alpha
         self.beta=beta
-        for l in self.children:
+        for i,l in enumerate(self.children):
             value,alphaT,betaT = l.AlphaBeta(self.alpha,self.beta)
             if self.player == 1:
                 if value==None:value=float('-inf')
                 if betaT==float('inf'):betaT=float('-inf')
                 self.alpha = max(value, self.alpha,betaT)
-                if l.beta > self.NextMove.beta :self.NextMove = l
+                if l.beta > self.NextMove.beta :
+                    self.NextMove = l
+                    self.nextMoveIndex=i
             else:
                 if value==None:value=float('inf')
                 if alphaT==float('-inf'):alphaT=float('inf')
                 self.beta = min(value, self.beta,alphaT)
-                if l.alpha < self.NextMove.alpha :self.NextMove = l
+                if l.alpha < self.NextMove.alpha :
+                    self.NextMove = l
+                    self.nextMoveIndex=i
 
             if self.alpha >= self.beta :
                 self.cutoff = True
