@@ -41,11 +41,16 @@ class game:
 
     def Ai_turn(self, turn_board=True):
         if (turn_board):
-            board,score=self.board.get_board()   
+            board,score=self.board.get_board()
             print("AI flipped")
             self.board.board_flip()
+        else:
+            self.board.board_flip()
+            board,score=self.board.get_board()
+            self.board.board_flip()
 
-        slot =ai_choice(board,score)
+        slot =ai_choice(board,score)+1
+        print("Slot-------->",slot)
         play_another_time = self.board.board_turn(slot)[4]
         if (play_another_time):
             self.Ai_turn(False)
@@ -199,4 +204,3 @@ i will steal when last slot is empty on myside and has gens on other side of boa
 
 if __name__ == '__main__':
     game()
-
