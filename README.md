@@ -6,5 +6,5 @@ the object of the game is to capture the most stones. set up lay out the board h
 
 ## Our project
 
-Mancala game along with an AI player using the Minimax algorithm with alpha-beta pruning. The game alow user to play against AI algorithm in two modes (stealing & without stealing).The algorithm uses a depth-first strategy when exploring the game tree to ensure efficient memory usage. We Also support saving and loading games.
+A simple implementation for Mancala game along with an AI player using the Minimax algorithm with alpha-beta pruning. The game alow user to play against AI algorithm in two modes (stealing & without stealing).The algorithm uses a depth-first strategy when exploring the game tree to ensure efficient memory usage. We Also support saving and loading games.
 
