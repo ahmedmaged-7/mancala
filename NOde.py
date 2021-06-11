@@ -142,11 +142,10 @@ class Node:
             return True
         return False
 
-kb=board
-kp=0
-ks=[0,0]
-for i in range(1000):
-    start = time.time()
+#kb=board
+#kp=0
+#ks=[0,0]
+def ai_choice(kb,ks,kp=1):
     c = Node(kb, kp,ks)
     c.insert()
     c.AlphaBeta(float('-inf'),float('inf'))
@@ -155,12 +154,8 @@ for i in range(1000):
         c.score[0]+=sum(c.data[0:6])
         c.score[1] += sum(c.data[6:])
         c.data= [0] * 12
-        print(c.data,c.score)
-        print('GameOver')
-        if c.score[0] > c.score[1] : print("Player 1 Won")
-        else:print("Player 2 Won")
-        print(i)
-        break
+        
+        
 
     print(k.data,k.score,k.player)
     if kp ==k.player :
@@ -168,5 +163,6 @@ for i in range(1000):
     kb=k.data
     kp=k.player
     ks=k.score
-    end=time.time()
-    print(end-start)
+  
+    return c.nextMoveIndex
+
