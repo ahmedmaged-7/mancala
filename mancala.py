@@ -10,7 +10,7 @@ class Game:
         self.gameRound = 1
         self.difficulty = 1
         self.board = Board(True)
-        self.verbose=False
+        self.verbose = False
         print("New game : enter \"n\" \nLoad game : enter \"l\" ")
         new_game = input()
 
@@ -32,10 +32,9 @@ class Game:
             self.board.__init__(False)
             print("you chose playing without stealing")
         print("if you want verbose mode please enter v else enter any key")
-        user_verbose=input()
-        if(user_verbose=="v"):
-            self.verbose=True
-              
+        user_verbose = input()
+        if (user_verbose == "v"):
+            self.verbose = True
 
         self.loop()
 
@@ -133,21 +132,21 @@ class Game:
         # self.board.print_board()
         # slot = input()
         a = datetime.datetime.now()
-        #print(self.difficulty)
-        slot,stats_returned,branchingFactorList = ai_choice(currentBoard, score, maxDepth=self.difficulty) 
-        slot+=1
-        if(self.verbose):
-            print(f"Tree Size = {branchingFactorList[0]} , Non Leaf Nodes = {branchingFactorList[1]} , cut-offs = {branchingFactorList[2]} , branching factor = {branchingFactorList[3]} ")
-            print(f"max_depth_explored  {stats_returned[0]} , Number of leaf nodes = {len(stats_returned[1])} , cut-offs per level = {stats_returned[2]}  ")        
- 
-       
+        # print(self.difficulty)
+        slot, stats_returned, branchingFactorList = ai_choice(currentBoard, score,self.board.isStealing, maxDepth=self.difficulty)
+        slot += 1
+        if (self.verbose):
+            print(
+                f"Tree Size = {branchingFactorList[0]} , Non Leaf Nodes = {branchingFactorList[1]} , cut-offs = {branchingFactorList[2]} , branching factor = {branchingFactorList[3]} ")
+            print(
+                f"max_depth_explored  {stats_returned[0]} , Number of leaf nodes = {len(stats_returned[1])} , cut-offs per level = {stats_returned[2]}  ")
+
         b = datetime.datetime.now()
         c = b - a
         print(f"AI took {c.total_seconds()} seconds to find the best move")
         print("Slot-------->", slot)
         play_another_time = self.board.board_turn(slot, True)[4]
         self.board.print_board()
-        print("\n")
         if play_another_time:
             self.board.opponent_side.reverse()
             self.Ai_turn(False)
@@ -185,13 +184,12 @@ class Board:
         # print(board)
         return [board, score]
 
-    def print_board(self,isReverse=False):
+    def print_board(self, isReverse=False):
         if isReverse:
             self.opponent_side.reverse()
 
         my_str = stringfy(self.my_side)
         opponent_str = stringfy(self.opponent_side)
-        print("\n")
         print("\t\t\tAI\n")
         print("    " + opponent_str)
         print(str(self.opponent_score) + "                           " + str(self.my_score))
@@ -320,20 +318,19 @@ i will steal when last slot is empty on myside and has gens on other side of boa
         last_item_Position_in_board = (slot + gems_value - 1) % len(circular_array)
         last_slot_empty = (circular_array[last_item_Position_in_board] == 0)
         if last_slot_empty:
-            #print("last_slot_empty")
+            # print("last_slot_empty")
             last_slot_is_on_my_side = last_item_Position_in_board < 6
             if last_slot_is_on_my_side:
-                #print(last_item_Position_in_board)
-                #print(circular_array)
+                # print(last_item_Position_in_board)
+                # print(circular_array)
                 other_side_pos = 12 - last_item_Position_in_board  # 13 is size of circular array- the score
-                #print(other_side_pos)
+                # print(other_side_pos)
 
                 other_side_has_gems_is_not_empty = (circular_array[other_side_pos] != 0)
                 if other_side_has_gems_is_not_empty:
                     print("stole")
                     return True
         return False
-
 
 
 if __name__ == '__main__':
