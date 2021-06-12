@@ -1,8 +1,9 @@
+import datetime
 import os.path
 import pickle
-import datetime
 
 from NOde import *
+
 
 class Game:
     def __init__(self):
@@ -26,14 +27,17 @@ class Game:
 
         print("To play Mancala with stealing enter \"y\" without stealing enter any key")
         user_choice = input()
+
         if user_choice == 'y':
             print("you chose playing with stealing")
         else:
             self.board.__init__(False)
             print("you chose playing without stealing")
+
         print("if you want verbose mode please enter v else enter any key")
         user_verbose = input()
-        if (user_verbose == "v"):
+
+        if user_verbose == "v":
             self.verbose = True
 
         self.loop()
@@ -51,8 +55,6 @@ class Game:
         tempOpScore = self.board.opponent_score
         isStealing = self.board.isStealing
         gameRound = self.gameRound
-        # tempMySide.reverse()
-        # tempOpSide.reverse()
 
         with open(fileName, 'wb') as file:
             pickle.dump({"my_side": tempMySide, "op_side": tempOpSide, "myScore": tempMyScore, "opScore": tempOpScore,
@@ -82,11 +84,14 @@ class Game:
     def loop(self):
 
         turn = False
+
         while not self.check_winner():
             print(f"Round : {self.gameRound}")
             self.user_turn(turn)
+
             if self.check_winner():
                 break
+
             self.Ai_turn()
             self.board.print_board()
             turn = True
@@ -96,60 +101,59 @@ class Game:
             if input() == "q":
                 self.saveGame()
                 break
+
         self.end_game()
 
     def user_turn(self, turn_board=True):
+
         if turn_board:
             print("user flipped")
-            # self.board.board_flip()
+
         self.board.print_board()
         print("choose a slot to play")
         slot = input()
         play_another_time = self.board.board_turn(slot)[4]
         self.board.print_board(True)
-        # self.board.print_board()
+
         if play_another_time:
             self.board.opponent_side.reverse()
             self.user_turn(False)
 
     def check_winner(self):
+
         if self.board.empty_side():
             print(self.board.get_current_winner())
             return True
         else:
             return False
 
-    def Ai_turn(self, turn_board=True):
-        # if turn_board:
-        #     currentBoard, score = self.board.get_board()
-        #     print("AI flipped")
-        #     self.board.board_flip()
-        # else:
-        #     self.board.board_flip()
-        #     currentBoard, score = self.board.get_board()
-        #     self.board.board_flip()
+    def Ai_turn(self):
+
         currentBoard, score = self.board.get_board()
-        # self.board.print_board()
-        # slot = input()
         a = datetime.datetime.now()
-        # print(self.difficulty)
-        slot, stats_returned, branchingFactorList = ai_choice(currentBoard, score,self.board.isStealing, maxDepth=self.difficulty)
+        slot, stats_returned, branchingFactorList = ai_choice(currentBoard, score, self.board.isStealing,
+                                                              maxDepth=self.difficulty)
         slot += 1
-        if (self.verbose):
+
+        if self.verbose:
             print(
-                f"Tree Size = {branchingFactorList[0]} , Non Leaf Nodes = {branchingFactorList[1]} , cut-offs = {branchingFactorList[2]} , branching factor = {branchingFactorList[3]} ")
+                f"Tree Size = {branchingFactorList[0]} , Non Leaf Nodes = {branchingFactorList[1]} ,"
+                f" cut-offs = {branchingFactorList[2]} , branching factor = {branchingFactorList[3]} ")
             print(
-                f"max_depth_explored  {stats_returned[0]} , Number of leaf nodes = {len(stats_returned[1])} , cut-offs per level = {stats_returned[2]}  ")
+                f"max_depth_explored  {stats_returned[0]} , Number of leaf nodes = {len(stats_returned[1])} , cut"
+                f"-offs per level = {stats_returned[2]}  ")
 
         b = datetime.datetime.now()
         c = b - a
         print(f"AI took {c.total_seconds()} seconds to find the best move")
         print("Slot-------->", slot)
+
         play_another_time = self.board.board_turn(slot, True)[4]
         self.board.print_board()
+
         if play_another_time:
             self.board.opponent_side.reverse()
-            self.Ai_turn(False)
+            self.Ai_turn()
 
     def end_game(self):
         print("do you want to play another time press \"s\" if you want exit press \"e\"")
@@ -178,11 +182,9 @@ class Board:
 
     def get_board(self):
         a = self.opponent_side.copy()
-        # a.reverse()
-        board = self.my_side + a
+        currentBoard = self.my_side + a
         score = [self.my_score, self.opponent_score]
-        # print(board)
-        return [board, score]
+        return [currentBoard, score]
 
     def print_board(self, isReverse=False):
         if isReverse:
@@ -223,20 +225,9 @@ class Board:
         else:
             return " draw score is {} :{}".format(self.my_score, self.opponent_score)
 
-    def board_flip(self):
-        self.opponent_side.reverse()
-        self.my_side.reverse()
-
-        tempSide = list(self.opponent_side)
-        tempScore = self.opponent_score
-
-        self.opponent_side, self.opponent_score, self.my_side, self.my_score = (
-            list(self.my_side), self.my_score, list(tempSide), tempScore)
-        return self
-
     def board_turn(self, slot, isFlip=False):
+
         if isFlip:
-            # self.opponent_side.reverse()
             [tempOpponent_side, self.opponent_score, tempMy_side, self.my_score, Next] = self.turn.take_turn(
                 self.opponent_side,
                 self.my_side,
@@ -253,8 +244,10 @@ class Board:
                 self.my_score,
                 self.opponent_score,
                 int(slot))
+
         self.my_side = list(tempMy_side)
         self.opponent_side = list(tempOpponent_side)
+
         return [self.my_side, self.my_score, self.opponent_side, self.opponent_score, Next]
 
 
@@ -270,32 +263,32 @@ class take_turn_no_stealing:
 
     def take_turn(self, my_side, opponent_side, my_score, opponent_score, slot):
         opponent = list(opponent_side)
-        # opponent.reverse()
         circular_array = my_side + [my_score] + opponent
         gems_value = circular_array[slot - 1]
         Next_turn = ((gems_value + slot) % len(circular_array) == 7)
         circular_array[slot - 1] = 0
+
         for i in range(gems_value):
             circular_array[(slot + i) % len(circular_array)] += 1
         opponent = list(circular_array[7:13])
-        # opponent.reverse()
+
         return [circular_array[0:6], circular_array[6], opponent, opponent_score, Next_turn]
 
 
 class take_turn_with_stealing:
 
     def take_turn(self, my_side, opponent_side, my_score, opponent_score, slot):
-        # print(my_side)
-        # print(opponent_side)
+
         opponent = list(opponent_side)
-        # opponent.reverse()
         circular_array = my_side + [my_score] + opponent
         gems_value = circular_array[slot - 1]
         Next_turn = ((gems_value + slot) % len(circular_array) == 7)
         circular_array[slot - 1] = 0
+
         for i in range(gems_value - 1):
             circular_array[(slot + i) % len(circular_array)] += 1
         last_item_Position_in_board = (slot + gems_value - 1) % len(circular_array)
+
         if self.will_i_steal(circular_array, gems_value, slot):
             other_side_pos = 12 - last_item_Position_in_board
             gems_other_side = circular_array[other_side_pos]
@@ -304,29 +297,23 @@ class take_turn_with_stealing:
         else:
             circular_array[last_item_Position_in_board] += 1
         opponent = list(circular_array[7:13])
-        # print(opponent)
-        # opponent.reverse()
-        # print(circular_array[0:6])
-        # print(opponent)
-        # print(opponent)
+
         return [circular_array[0:6], circular_array[6], opponent, opponent_score, Next_turn]
 
     def will_i_steal(self, circular_array, gems_value, slot):
         """
-i will steal when last slot is empty on myside and has gens on other side of board
+            i will steal when last slot is empty on myside and has gens on other side of board
         """
         last_item_Position_in_board = (slot + gems_value - 1) % len(circular_array)
         last_slot_empty = (circular_array[last_item_Position_in_board] == 0)
-        if last_slot_empty:
-            # print("last_slot_empty")
-            last_slot_is_on_my_side = last_item_Position_in_board < 6
-            if last_slot_is_on_my_side:
-                # print(last_item_Position_in_board)
-                # print(circular_array)
-                other_side_pos = 12 - last_item_Position_in_board  # 13 is size of circular array- the score
-                # print(other_side_pos)
 
+        if last_slot_empty:
+            last_slot_is_on_my_side = last_item_Position_in_board < 6
+
+            if last_slot_is_on_my_side:
+                other_side_pos = 12 - last_item_Position_in_board  # 13 is size of circular array- the score
                 other_side_has_gems_is_not_empty = (circular_array[other_side_pos] != 0)
+
                 if other_side_has_gems_is_not_empty:
                     print("stole")
                     return True

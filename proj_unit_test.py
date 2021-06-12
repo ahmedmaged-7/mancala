@@ -71,13 +71,6 @@ class TestSum(unittest.TestCase):
 
         self.assertEqual(test_board.my_score, 4 * 6)
 
-    def test_fliping(self):
-        test_board = Board(True)
-        test_board.my_side = [7, 0, 1, 2, 5, 0]
-        a = test_board.opponent_side
-        test_board.board_flip()
-        self.assertEqual(a, test_board.my_side)
-
     def test_stealing(self):
         a = take_turn_with_stealing()
         my_side = [4, 4, 4, 4, 1, 0]
