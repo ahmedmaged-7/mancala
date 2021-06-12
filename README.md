@@ -14,6 +14,6 @@ A simple implementation for Mancala game along with an AI player using the Minim
 2. AI Player the Minimax algorithm with alpha-beta pruning.
 3. Multiple levels game tree. (Bonus)
 4. Game saving and loading. (Bonus)
-5.Verbose. (Bonus)
+5. Verbose. (Bonus)
 
 
