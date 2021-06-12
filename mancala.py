@@ -81,7 +81,8 @@ class Game:
         while not self.check_winner():
             print(f"Round : {self.gameRound}")
             self.user_turn(turn)
-            self.check_winner()
+            if self.check_winner():
+                break
             self.Ai_turn()
             self.board.print_board()
             turn = True
@@ -101,6 +102,7 @@ class Game:
         print("choose a slot to play")
         slot = input()
         play_another_time = self.board.board_turn(slot)[4]
+        self.board.print_board(True)
         # self.board.print_board()
         if play_another_time:
             self.board.opponent_side.reverse()
@@ -172,7 +174,10 @@ class Board:
         # print(board)
         return [board, score]
 
-    def print_board(self):
+    def print_board(self,isReverse=False):
+        if isReverse:
+            self.opponent_side.reverse()
+
         my_str = stringfy(self.my_side)
         opponent_str = stringfy(self.opponent_side)
         print("\n")
@@ -182,6 +187,9 @@ class Board:
         print("    " + my_str)
         print("\n\t\t\tUser")
         print("\n")
+
+        if isReverse:
+            self.opponent_side.reverse()
 
     def empty_side(self):
         # this wil return if one of  board sides is empty and add other gems in score of the other user
@@ -301,13 +309,13 @@ i will steal when last slot is empty on myside and has gens on other side of boa
         last_item_Position_in_board = (slot + gems_value - 1) % len(circular_array)
         last_slot_empty = (circular_array[last_item_Position_in_board] == 0)
         if last_slot_empty:
-            print("last_slot_empty")
+            #print("last_slot_empty")
             last_slot_is_on_my_side = last_item_Position_in_board < 6
             if last_slot_is_on_my_side:
-                print(last_item_Position_in_board)
-                print(circular_array)
+                #print(last_item_Position_in_board)
+                #print(circular_array)
                 other_side_pos = 12 - last_item_Position_in_board  # 13 is size of circular array- the score
-                print(other_side_pos)
+                #print(other_side_pos)
 
                 other_side_has_gems_is_not_empty = (circular_array[other_side_pos] != 0)
                 if other_side_has_gems_is_not_empty:
