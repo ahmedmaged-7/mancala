@@ -114,7 +114,7 @@ class Game:
         play_another_time = self.board.board_turn(slot)[4]
         self.board.print_board(True)
 
-        if play_another_time and not self.check_winner():
+        if play_another_time and max(self.board.my_side) != 0:
             self.board.opponent_side.reverse()
             self.user_turn(False)
 
@@ -150,7 +150,7 @@ class Game:
         play_another_time = self.board.board_turn(slot, True)[4]
         self.board.print_board()
 
-        if play_another_time and not self.check_winner():
+        if play_another_time and max(self.board.opponent_side) != 0:
             self.board.opponent_side.reverse()
             self.Ai_turn()
 
