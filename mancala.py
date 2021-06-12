@@ -97,6 +97,7 @@ class Game:
         play_another_time = self.board.board_turn(slot)[4]
         # self.board.print_board()
         if play_another_time:
+            self.board.opponent_side.reverse()
             self.user_turn(False)
 
     def check_winner(self):
@@ -123,6 +124,7 @@ class Game:
         self.board.print_board()
         print("\n")
         if play_another_time:
+            self.board.opponent_side.reverse()
             self.Ai_turn(False)
 
     def end_game(self):
@@ -152,9 +154,10 @@ class Board:
 
     def get_board(self):
         a = self.opponent_side.copy()
-        a.reverse()
+        #a.reverse()
         board = self.my_side + a
         score = [self.my_score, self.opponent_score]
+        #print(board)
         return [board, score]
 
     def print_board(self):
@@ -204,7 +207,7 @@ class Board:
 
     def board_turn(self, slot, isFlip=False):
         if isFlip:
-            self.opponent_side.reverse()
+            #self.opponent_side.reverse()
             [tempOpponent_side, self.opponent_score, tempMy_side, self.my_score, Next] = self.turn.take_turn(
                 self.opponent_side,
                 self.my_side,
@@ -213,9 +216,11 @@ class Board:
                 int(slot))
             tempOpponent_side.reverse()
         else:
+            temp=list(self.opponent_side)
+            temp.reverse()
             [tempMy_side, self.my_score, tempOpponent_side, self.opponent_score, Next] = self.turn.take_turn(
                 self.my_side,
-                self.opponent_side,
+                temp,
                 self.my_score,
                 self.opponent_score,
                 int(slot))
@@ -251,8 +256,8 @@ class take_turn_no_stealing:
 class take_turn_with_stealing:
 
     def take_turn(self, my_side, opponent_side, my_score, opponent_score, slot):
-        # print(my_side)
-        # print(opponent_side)
+        #print(my_side)
+        #print(opponent_side)
         opponent = list(opponent_side)
         # opponent.reverse()
         circular_array = my_side + [my_score] + opponent
@@ -272,8 +277,8 @@ class take_turn_with_stealing:
         opponent = list(circular_array[7:13])
         # print(opponent)
         # opponent.reverse()
-        # print(opponent)
-        # print(circular_array[0:6])
+        #print(circular_array[0:6])
+        #print(opponent)
         # print(opponent)
         return [circular_array[0:6], circular_array[6], opponent, opponent_score, Next_turn]
 
