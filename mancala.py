@@ -4,14 +4,13 @@ import datetime
 
 from NOde import *
 
-
 class Game:
     def __init__(self):
 
         self.gameRound = 1
         self.difficulty = 1
         self.board = Board(True)
-
+        self.verbose=False
         print("New game : enter \"n\" \nLoad game : enter \"l\" ")
         new_game = input()
 
@@ -32,6 +31,12 @@ class Game:
         else:
             self.board.__init__(False)
             print("you chose playing without stealing")
+        print("if you want verbose mode please enter v else enter any key")
+        user_verbose=input()
+        if(user_verbose=="v"):
+            self.verbose=True
+              
+
         self.loop()
 
     def saveGame(self):
@@ -129,7 +134,13 @@ class Game:
         # slot = input()
         a = datetime.datetime.now()
         #print(self.difficulty)
-        slot = ai_choice(currentBoard, score, maxDepth=self.difficulty) + 1
+        slot,stats_returned,branchingFactorList = ai_choice(currentBoard, score, maxDepth=self.difficulty) 
+        slot+=1
+        if(self.verbose):
+            print(f"Tree Size = {branchingFactorList[0]} , Non Leaf Nodes = {branchingFactorList[1]} , cut-offs = {branchingFactorList[2]} , branching factor = {branchingFactorList[3]} ")
+            print(f"max_depth_explored  {stats_returned[0]} , Number of leaf nodes = {len(stats_returned[1])} , cut-offs per level = {stats_returned[2]}  ")        
+ 
+       
         b = datetime.datetime.now()
         c = b - a
         print(f"AI took {c.total_seconds()} seconds to find the best move")
@@ -322,6 +333,7 @@ i will steal when last slot is empty on myside and has gens on other side of boa
                     print("stole")
                     return True
         return False
+
 
 
 if __name__ == '__main__':
