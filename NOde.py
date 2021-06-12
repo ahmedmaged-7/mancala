@@ -16,9 +16,31 @@ t1.start()
 #player 0 humano
 
 #player 1 AI
+"""
+The branching factor can be cut down by a pruning algorithm.
+The average branching factor can be quickly calculated as the number of non-root nodes (the size of the tree, minus one; or the number of edges) divided by the number of non-leaf nodes (the number of nodes with children). 
+
+"""
+
+class stats:
+   def __init__(self,max_depth):
+         self.cut_off=[0 for x in range(max_depth)] 
+         self.leaf_values_evaluated=[]
+         self.max_depth_explored=0 #i am not so sure of this
+   def inc_cut_off(self,depth):
+         self.cut_off[depth]+=1
+         if(depth>self.max_depth_explored):
+             self.max_depth_explored=depth
+   def leaf_node_eval(self,index,score):
+           self.leaf_values_evaluated.append([index,score])
+
+   def return_stats(self):
+       return [self.max_depth_explored,self.leaf_values_evaluated,self.cut_off]       
+
 class Node:
-    def __init__(self, data, player, score, depth=0):
+    def __init__(self, data, player, score, max_depth,stats,depth=0,index=None):
         self.children = []
+        self.index=index
         self.NextMove=None
         self.nextMoveIndex=None
         self.alpha = float('-inf')
@@ -29,6 +51,10 @@ class Node:
         self.player = player
         self.depth = depth
         self.cutoff=False
+        self.max_depth=max_depth
+        self.stats=stats
+        
+
     def AlphaBeta(self,alpha,beta):
         if   self._IsLeaf(self):
             return self.evaluateValue,self.alpha,self.beta
@@ -55,17 +81,19 @@ class Node:
 
             if self.alpha >= self.beta :
                 self.cutoff = True
+                self.stats.inc_cut_off(self.depth)
                 #print("cutoff")
                 break
                 #return self.evaluateValue,self.alpha,self.beta
         return self.evaluateValue,self.alpha,self.beta
     def insert(self):
-        if self.depth == 5:
+        if self.depth == self.max_depth:
             self.evaluateValue = self.Utility(self)
+            self.stats.leaf_node_eval(self.index,self.evaluateValue )
             return
         #print("data--->", self.data, self.score, self.player)
         for l in self.NextMovePred(self.data, self.player, self.score):
-            self.children.append(Node(l["data"], l["player"], l["Score"], self.depth + 1))
+            self.children.append(Node(l["data"], l["player"], l["Score"], self.max_depth,self.stats,self.depth + 1,l["index"]))
         for l in self.children:
             pass#print(" child--->", l.data, l.score, l.player)
         for l in self.children:
@@ -134,20 +162,22 @@ class Node:
             node["data"] = List
             node["player"] = PT
             node["Score"] = ScoreInc
+            node["index"] = i%6
             MoveList.append(node)
         return MoveList
-
+    def get_cut_off(self):
+      return self.cut_off_value
     def _IsLeaf(self, node):
         if not node.children:
             return True
         return False
 
-kb=board
-kp=0
-ks=[0,0]
-for i in range(1000):
-    start = time.time()
-    c = Node(kb, kp,ks)
+#kb=board
+#kp=0
+#ks=[0,0]
+def ai_choice(kb,ks,max_depth,kp=1):
+    stat=stats(max_depth)
+    c = Node(kb, kp,ks,max_depth,stat)
     c.insert()
     c.AlphaBeta(float('-inf'),float('inf'))
     k=c.NextMove
@@ -155,18 +185,15 @@ for i in range(1000):
         c.score[0]+=sum(c.data[0:6])
         c.score[1] += sum(c.data[6:])
         c.data= [0] * 12
-        print(c.data,c.score)
-        print('GameOver')
-        if c.score[0] > c.score[1] : print("Player 1 Won")
-        else:print("Player 2 Won")
-        print(i)
-        break
 
-    print(k.data,k.score,k.player)
+
+    print("list that contain cut off at levels ")
+    print(stat.return_stats())
+    #print(k.data,k.score,k.player)
     if kp ==k.player :
         pass
     kb=k.data
     kp=k.player
     ks=k.score
-    end=time.time()
-    print(end-start)
+
+    return k.index
