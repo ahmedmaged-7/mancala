@@ -2,15 +2,35 @@ board = [4, 4, 4, 4, 4, 4,
          4, 4, 4, 4, 4, 4]
 
 
-# player 0 humano
+# player 0 human
 
 # player 1 AI
+
+class stats:
+   def __init__(self,max_depth):
+         self.cut_off=[0 for x in range(max_depth)] 
+         self.leaf_values_evaluated=[]
+         self.max_depth_explored=0 
+   def inc_cut_off(self,depth):
+         self.cut_off[depth]+=1
+         if(depth>self.max_depth_explored):
+             self.max_depth_explored=depth
+   def leaf_node_eval(self,index,score):
+           self.leaf_values_evaluated.append([index,score])
+
+   def return_stats(self): 
+       if(self.leaf_values_evaluated[len(self.cut_off)-1]!=0): self.max_depth_explored=len(self.cut_off) 
+       return [self.max_depth_explored,self.leaf_values_evaluated,self.cut_off]       
+
+
+
+
 class Node:
     treeSize = 0
     nonLeafNodes = 0
     cutOffs = 0
 
-    def __init__(self, data, player, score, depth=0, maxDepth=1, index=None):
+    def __init__(self, data, player, score, stat,depth=0, maxDepth=1, index=None):
         Node.treeSize += 1
         Node.nonLeafNodes += 1
         # print(maxDepth)
@@ -28,6 +48,7 @@ class Node:
         self.maxDepth = maxDepth
         self.cutoff = False
         self.leafs = 0
+        self.stats=stat
 
     def AlphaBeta(self, alpha, beta):
         if self._IsLeaf(self):
@@ -59,6 +80,8 @@ class Node:
                 Node.cutOffs+=1
                 Node.nonLeafNodes -= (len(self.children))
                 Node.nonLeafNodes+=(i+1)
+                
+                self.stats.inc_cut_off(self.depth)
                 # print("cutoff")
                 break
                 # return self.evaluateValue,self.alpha,self.beta
@@ -67,10 +90,11 @@ class Node:
     def insert(self):
         if self.depth == self.maxDepth:
             self.evaluateValue = self.Utility(self)
+            self.stats.leaf_node_eval(self.index,self.evaluateValue )
             return
         # print("data--->", self.data, self.score, self.player)
         for l in self.NextMovePred(self.data, self.player, self.score):
-            self.children.append(Node(l["data"], l["player"], l["Score"], self.depth + 1, self.maxDepth, l["index"]))
+            self.children.append(Node(l["data"], l["player"], l["Score"], self.stats,self.depth + 1, self.maxDepth, l["index"]))
         for l in self.children:
             pass  # print(" child--->", l.data, l.score, l.player)
         for l in self.children:
@@ -156,24 +180,25 @@ class Node:
 # kp=0
 # ks=[0,0]
 def ai_choice(kb, ks, kp=1, maxDepth=1):
-    c = Node(kb, kp, ks, maxDepth=maxDepth)
+    stat=stats(maxDepth)
+    c = Node(kb, kp, ks,stat,maxDepth=maxDepth)
     c.insert()
     c.AlphaBeta(float('-inf'), float('inf'))
     k = c.NextMove
-    print(len(c.children))
+    #print(len(c.children))
     if k == None:
         c.score[0] += sum(c.data[0:6])
         c.score[1] += sum(c.data[6:])
         c.data = [0] * 12
-
-    print(k.data, k.score, k.player)
+    #print(stat.return_stats())
+    #print(k.data, k.score, k.player)
     if kp == k.player:
         pass
     kb = k.data
     kp = k.player
     ks = k.score
 
-    print(
-        f"Tree Size = {Node.treeSize-1} , Non Leaf Nodes = {Node.nonLeafNodes} , cut-offs = {Node.cutOffs} , branching factor = {(Node.treeSize-1) / Node.nonLeafNodes} ")
+    
 
-    return k.index
+    return [k.index,stat.return_stats(),[Node.treeSize-1,Node.nonLeafNodes,Node.cutOffs,(Node.treeSize-1) / Node.nonLeafNodes]]
+
