@@ -25,7 +25,7 @@ class Game:
         if user_choice == 'y':
             print("you chose playing with stealing")
         else:
-            self.board.isStealing = False
+            self.board.__init__(False)
             print("you chose playing without stealing")
         self.loop()
 
@@ -58,11 +58,11 @@ class Game:
 
         if os.path.isfile(filePath):
             state = pickle.load(open(filePath, "rb"))
+            self.board.__init__(state["isStealing"])
             self.board.my_side = state["my_side"]
             self.board.opponent_side = state["op_side"]
             self.board.my_score = state["myScore"]
             self.board.opponent_score = state["opScore"]
-            self.board.isStealing = state["isStealing"]
             self.gameRound = state["gameRound"]
             self.loop()
         else:
@@ -99,6 +99,7 @@ class Game:
         if play_another_time:
             self.board.opponent_side.reverse()
             self.user_turn(False)
+
 
     def check_winner(self):
         if self.board.empty_side():
