@@ -20,7 +20,12 @@ class stats:
         self.leaf_values_evaluated.append([index, score])
 
     def return_stats(self):
-        if self.leaf_values_evaluated[len(self.cut_off) - 1] != 0: self.max_depth_explored = len(self.cut_off)
+
+        if len(self.leaf_values_evaluated) != 0:
+
+            if self.leaf_values_evaluated[len(self.cut_off) - 1] != 0:
+                self.max_depth_explored = len(self.cut_off)
+
         return [self.max_depth_explored, self.leaf_values_evaluated, self.cut_off]
 
 
