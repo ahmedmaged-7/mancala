@@ -1,5 +1,6 @@
 import os.path
 import pickle
+import datetime
 
 from NOde import *
 
@@ -8,6 +9,7 @@ class Game:
     def __init__(self):
 
         self.gameRound = 1
+        self.difficulty = 1
         self.board = Board(True)
 
         print("New game : enter \"n\" \nLoad game : enter \"l\" ")
@@ -19,6 +21,9 @@ class Game:
             self.loadGame()
 
     def playNew(self):
+
+        print("Choose a difficulty level from \"1\" to \"9\" (1 = Very Easy , 9 = Very Hard) : ")
+        self.difficulty = int(input())
 
         print("To play Mancala with stealing enter \"y\" without stealing enter any key")
         user_choice = input()
@@ -42,12 +47,12 @@ class Game:
         tempOpScore = self.board.opponent_score
         isStealing = self.board.isStealing
         gameRound = self.gameRound
-        #tempMySide.reverse()
-        #tempOpSide.reverse()
+        # tempMySide.reverse()
+        # tempOpSide.reverse()
 
         with open(fileName, 'wb') as file:
             pickle.dump({"my_side": tempMySide, "op_side": tempOpSide, "myScore": tempMyScore, "opScore": tempOpScore,
-                         "isStealing": isStealing, "gameRound": gameRound},
+                         "isStealing": isStealing, "difficulty": self.difficulty, "gameRound": gameRound},
                         file)
         print(pickle.load(open(fileName, "rb")))
 
@@ -63,6 +68,7 @@ class Game:
             self.board.opponent_side = state["op_side"]
             self.board.my_score = state["myScore"]
             self.board.opponent_score = state["opScore"]
+            self.difficulty = state["difficulty"]
             self.gameRound = state["gameRound"]
             self.loop()
         else:
@@ -100,7 +106,6 @@ class Game:
             self.board.opponent_side.reverse()
             self.user_turn(False)
 
-
     def check_winner(self):
         if self.board.empty_side():
             print(self.board.get_current_winner())
@@ -120,7 +125,12 @@ class Game:
         currentBoard, score = self.board.get_board()
         # self.board.print_board()
         # slot = input()
-        slot = ai_choice(currentBoard, score) + 1
+        a = datetime.datetime.now()
+        #print(self.difficulty)
+        slot = ai_choice(currentBoard, score, maxDepth=self.difficulty) + 1
+        b = datetime.datetime.now()
+        c = b - a
+        print(f"AI took {c.total_seconds()} seconds to find the best move")
         print("Slot-------->", slot)
         play_another_time = self.board.board_turn(slot, True)[4]
         self.board.print_board()
@@ -156,10 +166,10 @@ class Board:
 
     def get_board(self):
         a = self.opponent_side.copy()
-        #a.reverse()
+        # a.reverse()
         board = self.my_side + a
         score = [self.my_score, self.opponent_score]
-        #print(board)
+        # print(board)
         return [board, score]
 
     def print_board(self):
@@ -209,7 +219,7 @@ class Board:
 
     def board_turn(self, slot, isFlip=False):
         if isFlip:
-            #self.opponent_side.reverse()
+            # self.opponent_side.reverse()
             [tempOpponent_side, self.opponent_score, tempMy_side, self.my_score, Next] = self.turn.take_turn(
                 self.opponent_side,
                 self.my_side,
@@ -218,7 +228,7 @@ class Board:
                 int(slot))
             tempOpponent_side.reverse()
         else:
-            temp=list(self.opponent_side)
+            temp = list(self.opponent_side)
             temp.reverse()
             [tempMy_side, self.my_score, tempOpponent_side, self.opponent_score, Next] = self.turn.take_turn(
                 self.my_side,
@@ -258,8 +268,8 @@ class take_turn_no_stealing:
 class take_turn_with_stealing:
 
     def take_turn(self, my_side, opponent_side, my_score, opponent_score, slot):
-        #print(my_side)
-        #print(opponent_side)
+        # print(my_side)
+        # print(opponent_side)
         opponent = list(opponent_side)
         # opponent.reverse()
         circular_array = my_side + [my_score] + opponent
@@ -279,8 +289,8 @@ class take_turn_with_stealing:
         opponent = list(circular_array[7:13])
         # print(opponent)
         # opponent.reverse()
-        #print(circular_array[0:6])
-        #print(opponent)
+        # print(circular_array[0:6])
+        # print(opponent)
         # print(opponent)
         return [circular_array[0:6], circular_array[6], opponent, opponent_score, Next_turn]
 
