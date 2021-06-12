@@ -103,6 +103,7 @@ class Game:
     def check_winner(self):
         if self.board.empty_side():
             print(self.board.get_current_winner())
+            return True
         else:
             return False
 
