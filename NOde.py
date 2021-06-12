@@ -17,8 +17,9 @@ t1.start()
 
 #player 1 AI
 class Node:
-    def __init__(self, data, player, score, depth=0):
+    def __init__(self, data, player, score, depth=0,index=None):
         self.children = []
+        self.index=index
         self.NextMove=None
         self.nextMoveIndex=None
         self.alpha = float('-inf')
@@ -65,7 +66,7 @@ class Node:
             return
         #print("data--->", self.data, self.score, self.player)
         for l in self.NextMovePred(self.data, self.player, self.score):
-            self.children.append(Node(l["data"], l["player"], l["Score"], self.depth + 1))
+            self.children.append(Node(l["data"], l["player"], l["Score"], self.depth + 1,l["index"]))
         for l in self.children:
             pass#print(" child--->", l.data, l.score, l.player)
         for l in self.children:
@@ -134,6 +135,7 @@ class Node:
             node["data"] = List
             node["player"] = PT
             node["Score"] = ScoreInc
+            node["index"] = i%6
             MoveList.append(node)
         return MoveList
 
@@ -142,11 +144,10 @@ class Node:
             return True
         return False
 
-kb=board
-kp=0
-ks=[0,0]
-for i in range(1000):
-    start = time.time()
+#kb=board
+#kp=0
+#ks=[0,0]
+def ai_choice(kb,ks,kp=1):
     c = Node(kb, kp,ks)
     c.insert()
     c.AlphaBeta(float('-inf'),float('inf'))
@@ -155,12 +156,8 @@ for i in range(1000):
         c.score[0]+=sum(c.data[0:6])
         c.score[1] += sum(c.data[6:])
         c.data= [0] * 12
-        print(c.data,c.score)
-        print('GameOver')
-        if c.score[0] > c.score[1] : print("Player 1 Won")
-        else:print("Player 2 Won")
-        print(i)
-        break
+
+
 
     print(k.data,k.score,k.player)
     if kp ==k.player :
@@ -168,5 +165,5 @@ for i in range(1000):
     kb=k.data
     kp=k.player
     ks=k.score
-    end=time.time()
-    print(end-start)
+
+    return k.index
