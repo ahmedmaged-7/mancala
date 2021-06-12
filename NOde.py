@@ -164,9 +164,11 @@ class Node:
 # kp=0
 # ks=[0,0]
 def ai_choice(kb, ks, stealing, kp=1, maxDepth=1):
+
     Node.treeSize = 0
     Node.nonLeafNodes = 0
     Node.cutOffs = 0
+    
     stat = stats(maxDepth)
     c = Node(kb, kp, ks, stat, maxDepth=maxDepth)
     c.insert(stealing)
