@@ -6,7 +6,13 @@ board = [4, 4, 4, 4, 4, 4,
 
 # player 1 AI
 class Node:
+    treeSize = 0
+    nonLeafNodes = 0
+    cutOffs = 0
+
     def __init__(self, data, player, score, depth=0, maxDepth=1, index=None):
+        Node.treeSize += 1
+        Node.nonLeafNodes += 1
         # print(maxDepth)
         self.children = []
         self.index = index
@@ -21,9 +27,11 @@ class Node:
         self.depth = depth
         self.maxDepth = maxDepth
         self.cutoff = False
+        self.leafs = 0
 
     def AlphaBeta(self, alpha, beta):
         if self._IsLeaf(self):
+            Node.nonLeafNodes -= 1
             return self.evaluateValue, self.alpha, self.beta
         self.NextMove = self.children[0]
         self.nextMoveIndex = 0
@@ -48,6 +56,9 @@ class Node:
 
             if self.alpha >= self.beta:
                 self.cutoff = True
+                Node.cutOffs+=1
+                Node.nonLeafNodes -= (len(self.children))
+                Node.nonLeafNodes+=(i+1)
                 # print("cutoff")
                 break
                 # return self.evaluateValue,self.alpha,self.beta
@@ -149,6 +160,7 @@ def ai_choice(kb, ks, kp=1, maxDepth=1):
     c.insert()
     c.AlphaBeta(float('-inf'), float('inf'))
     k = c.NextMove
+    print(len(c.children))
     if k == None:
         c.score[0] += sum(c.data[0:6])
         c.score[1] += sum(c.data[6:])
@@ -160,5 +172,8 @@ def ai_choice(kb, ks, kp=1, maxDepth=1):
     kb = k.data
     kp = k.player
     ks = k.score
+
+    print(
+        f"Tree Size = {Node.treeSize-1} , Non Leaf Nodes = {Node.nonLeafNodes} , cut-offs = {Node.cutOffs} , branching factor = {(Node.treeSize-1) / Node.nonLeafNodes} ")
 
     return k.index
