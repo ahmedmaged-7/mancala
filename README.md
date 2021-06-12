@@ -17,3 +17,5 @@ A simple implementation for Mancala game along with an AI player using the Minim
 5. Verbose. (Bonus)
 
 
+## Video 
+	- https://www.youtube.com/playlist?list=PLVZHk5R-valdCfUFIK3Wa4jCjvTrCN1kb
