@@ -93,7 +93,6 @@ class Game:
                 break
 
             self.Ai_turn()
-            self.board.print_board()
             turn = True
             self.gameRound += 1
 
