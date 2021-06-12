@@ -1,20 +1,16 @@
-def Calc_number_of_pieces(board, player):
-    count = 0
-    no_of_pieces = 0
-    while count > 6:
-        no_of_pieces += board[player*6+count]
-    return no_of_pieces
-
-
-def scoring(ai_score, slots, board):
-    no_of_pieces = 0
+def Utility( data,score):
     Score = 0
-    ai_earns = False
-    if ai_earns:
-        no_of_pieces = no_of_pieces - Calc_number_of_pieces(board, PC)
-    else:
-        no_of_pieces = Calc_number_of_pieces(board, User)
-    if ai_score:
-        Score = (Score - ai_score)
-    result = Score + no_of_pieces
-    return result
+    Score -= sum(data[0:6])
+    Score += sum(data[6:])
+    for i, l in enumerate(data[0:6]):
+        if l + i > 6:
+            Score -= 1
+        elif i + l == 6:
+            Score -= 3
+    for i, l in enumerate(data[6:]):
+        if l + i > 6:
+            Score += 1
+        elif i + l == 6:
+            Score += 4
+
+    return Score + 4 * (score[1] - score[0])
